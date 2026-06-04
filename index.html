@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ishigaki Tour | Language Select</title>
-  <meta http-equiv="refresh" content="3; url=ja/">
+  <meta http-equiv="refresh" content="3; url=en/">
   <style>
     body {
       margin: 0;
@@ -40,7 +40,9 @@
       }
       if (/^ru(?:-|$)/i.test(preferred)) {
         window.location.replace("ru/");
+        return;
       }
+      window.location.replace("en/");
     })();
   </script>
 </head>
