@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
   <style>
     :root {
       --sea: #0f6ea8;
@@ -184,12 +185,17 @@
       font-size: 0.95rem;
     }
 
-    .map-svg {
+    .map-canvas {
       width: 100%;
-      height: auto;
+      height: 300px;
       display: block;
       border-radius: 12px;
       background: linear-gradient(170deg, #dff3ff 0%, #eef9ff 55%, #f7feff 100%);
+      overflow: hidden;
+    }
+
+    .leaflet-container {
+      font-family: "Kiwi Maru", serif;
     }
 
     .map-note {
@@ -282,55 +288,69 @@
       <div class="maps">
         <article class="map-card">
           <h3 class="map-title">沖縄本島と石垣島の位置関係</h3>
-          <svg class="map-svg" viewBox="0 0 520 300" role="img" aria-label="沖縄本島と石垣島の位置関係">
-            <defs>
-              <marker id="arrow-left" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto">
-                <polygon points="0 0, 7 3.5, 0 7" fill="#0d6b9f"></polygon>
-              </marker>
-            </defs>
-            <rect x="0" y="0" width="520" height="300" fill="transparent"></rect>
-            <ellipse cx="170" cy="130" rx="62" ry="24" fill="#a5d4a6" stroke="#4f7f5a" stroke-width="2"></ellipse>
-            <ellipse cx="375" cy="198" rx="36" ry="20" fill="#a5d4a6" stroke="#4f7f5a" stroke-width="2"></ellipse>
-            <circle cx="300" cy="162" r="4" fill="#6aa6cf"></circle>
-            <circle cx="320" cy="174" r="5" fill="#6aa6cf"></circle>
-            <circle cx="344" cy="184" r="4" fill="#6aa6cf"></circle>
-            <path d="M218 144 C258 154, 292 167, 336 188" fill="none" stroke="#0d6b9f" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#arrow-left)"></path>
-            <text x="126" y="126" font-size="16" fill="#0b2d4a" font-weight="700">沖縄本島</text>
-            <text x="344" y="205" font-size="16" fill="#0b2d4a" font-weight="700">石垣島</text>
-            <text x="236" y="138" font-size="13" fill="#24506f">約410km</text>
-          </svg>
+          <div id="okinawa-ishigaki-map" class="map-canvas" role="img" aria-label="沖縄本島と石垣島の位置関係地図"></div>
         </article>
 
         <article class="map-card">
           <h3 class="map-title">日本列島と成田空港から石垣島への直行ルート</h3>
-          <svg class="map-svg" viewBox="0 0 520 300" role="img" aria-label="日本列島と成田から石垣島の直行ルート">
-            <defs>
-              <marker id="arrow-right" markerWidth="8" markerHeight="8" refX="6" refY="3.5" orient="auto">
-                <polygon points="0 0, 7 3.5, 0 7" fill="#d9472f"></polygon>
-              </marker>
-            </defs>
-            <rect x="0" y="0" width="520" height="300" fill="transparent"></rect>
-            <path d="M320 50 L350 40 L370 60 L355 78 L334 75 Z" fill="#badcbb" stroke="#4f7f5a" stroke-width="2"></path>
-            <path d="M292 82 L316 72 L332 88 L322 104 L301 106 Z" fill="#badcbb" stroke="#4f7f5a" stroke-width="2"></path>
-            <path d="M285 118 L304 113 L314 130 L302 145 L284 143 Z" fill="#badcbb" stroke="#4f7f5a" stroke-width="2"></path>
-            <path d="M268 150 L284 147 L294 165 L286 178 L269 176 Z" fill="#badcbb" stroke="#4f7f5a" stroke-width="2"></path>
-            <circle cx="245" cy="210" r="10" fill="#badcbb" stroke="#4f7f5a" stroke-width="2"></circle>
-            <ellipse cx="212" cy="246" rx="24" ry="14" fill="#a5d4a6" stroke="#4f7f5a" stroke-width="2"></ellipse>
-            <circle cx="318" cy="80" r="5" fill="#d9472f"></circle>
-            <circle cx="212" cy="246" r="5" fill="#d9472f"></circle>
-            <path d="M314 84 C286 132, 252 186, 216 242" fill="none" stroke="#d9472f" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#arrow-right)"></path>
-            <text x="330" y="78" font-size="14" fill="#8c2f20" font-weight="700">成田空港</text>
-            <text x="226" y="251" font-size="14" fill="#8c2f20" font-weight="700">石垣島</text>
-            <text x="244" y="136" font-size="13" fill="#8c2f20">直行便ルート</text>
-          </svg>
+          <div id="japan-narita-ishigaki-map" class="map-canvas" role="img" aria-label="日本列島と成田から石垣島の直行ルート地図"></div>
         </article>
       </div>
-      <p class="map-note">※ 地図と航路は位置関係を説明するためのイメージです。実際の地形・方位・飛行経路とは異なります。</p>
+      <p class="map-note">※ OpenStreetMapを利用した実地図上の位置表示です。飛行ルートは直行便の概略線として表示しています。</p>
     </section>
 
     <aside class="note">
       2泊3日のスケジュールは、天候や海況に応じて安全第一で調整します。夏季は日差しが強いため、帽子・日焼け止め・飲料水の準備がおすすめです。
     </aside>
   </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function () {
+      if (typeof L === "undefined") {
+        return;
+      }
+
+      var naha = [26.2124, 127.6809];
+      var ishigaki = [24.3963, 124.2454];
+      var narita = [35.7719, 140.3929];
+
+      function addTiles(map) {
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+      }
+
+      var mapLeft = L.map("okinawa-ishigaki-map", {
+        zoomControl: true,
+        scrollWheelZoom: false
+      });
+      addTiles(mapLeft);
+      L.marker(naha).addTo(mapLeft).bindPopup("沖縄本島（那覇周辺）");
+      L.marker(ishigaki).addTo(mapLeft).bindPopup("石垣島（新石垣空港周辺）");
+      L.polyline([naha, ishigaki], {
+        color: "#0d6b9f",
+        weight: 3,
+        dashArray: "8 6"
+      }).addTo(mapLeft).bindPopup("沖縄本島 - 石垣島");
+      mapLeft.fitBounds([naha, ishigaki], {
+        padding: [30, 30]
+      });
+
+      var mapRight = L.map("japan-narita-ishigaki-map", {
+        zoomControl: true,
+        scrollWheelZoom: false
+      });
+      addTiles(mapRight);
+      L.marker(narita).addTo(mapRight).bindPopup("成田空港");
+      L.marker(ishigaki).addTo(mapRight).bindPopup("石垣島（新石垣空港周辺）");
+      L.polyline([narita, ishigaki], {
+        color: "#d9472f",
+        weight: 3,
+        dashArray: "10 6"
+      }).addTo(mapRight).bindPopup("成田空港 - 石垣島 直行便ルート");
+      mapRight.setView([31.2, 131.5], 4);
+    })();
+  </script>
 </body>
 </html>
