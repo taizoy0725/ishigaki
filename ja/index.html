@@ -337,13 +337,13 @@
       <h2>アクセスイメージ</h2>
       <div class="maps">
         <article class="map-card">
-          <h3 class="map-title">沖縄本島と石垣島の位置関係</h3>
-          <div id="okinawa-ishigaki-map" class="map-canvas" role="img" aria-label="沖縄本島と石垣島の位置関係地図"></div>
+          <h3 class="map-title">日本列島と成田空港から石垣島への直行ルート</h3>
+          <div id="japan-narita-ishigaki-map" class="map-canvas" role="img" aria-label="日本列島と成田から石垣島の直行ルート地図"></div>
         </article>
 
         <article class="map-card">
-          <h3 class="map-title">日本列島と成田空港から石垣島への直行ルート</h3>
-          <div id="japan-narita-ishigaki-map" class="map-canvas" role="img" aria-label="日本列島と成田から石垣島の直行ルート地図"></div>
+          <h3 class="map-title">沖縄本島と石垣島の位置関係</h3>
+          <div id="okinawa-ishigaki-map" class="map-canvas" role="img" aria-label="沖縄本島と石垣島の位置関係地図"></div>
         </article>
       </div>
       <p class="map-note">※ OpenStreetMapを利用した実地図上の位置表示です。飛行ルートは直行便の概略線として表示しています。</p>
@@ -394,6 +394,18 @@
         }).addTo(map);
       }
 
+      function haversineKm(from, to) {
+        var rad = Math.PI / 180;
+        var dLat = (to[0] - from[0]) * rad;
+        var dLng = (to[1] - from[1]) * rad;
+        var lat1 = from[0] * rad;
+        var lat2 = to[0] * rad;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return 6371 * c;
+      }
+
       var mapLeft = L.map("okinawa-ishigaki-map", {
         zoomControl: true,
         scrollWheelZoom: false
@@ -433,6 +445,17 @@
         weight: 3,
         dashArray: "10 6"
       }).addTo(mapRight).bindPopup("成田空港 - 石垣島 直行便ルート");
+
+      L.tooltip({
+        permanent: true,
+        direction: "center",
+        className: "distance-label",
+        opacity: 1
+      })
+        .setLatLng([(narita[0] + ishigaki[0]) / 2, (narita[1] + ishigaki[1]) / 2])
+        .setContent("約" + Math.round(haversineKm(narita, ishigaki)) + "km")
+        .addTo(mapRight);
+
       mapRight.setView([31.2, 131.5], 4);
     })();
   </script>
