@@ -215,6 +215,42 @@
       line-height: 1.6;
     }
 
+    .shorts {
+      margin-top: 22px;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .shorts h2 {
+      margin-top: 0;
+    }
+
+    .shorts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .short-card {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(17, 48, 71, 0.12);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .short-frame {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      border: 0;
+      border-radius: 10px;
+      display: block;
+      background: #000;
+    }
+
     @keyframes rise {
       from {
         opacity: 0;
@@ -241,6 +277,10 @@
       }
 
       .maps {
+        grid-template-columns: 1fr;
+      }
+
+      .shorts-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -307,6 +347,27 @@
         </article>
       </div>
       <p class="map-note">※ OpenStreetMapを利用した実地図上の位置表示です。飛行ルートは直行便の概略線として表示しています。</p>
+    </section>
+
+    <section class="shorts" aria-label="YouTubeショート動画">
+      <h2>石垣島ショート動画</h2>
+      <div class="shorts-grid">
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/q-EVZupV348" title="石垣島ショート1" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/YPnc-5V4YuU" title="石垣島ショート2" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/zgf40qv3yYY" title="石垣島ショート3" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/0kL2ik9n5BI" title="石垣島ショート4" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/BdtBDQ2_Oio" title="石垣島ショート5" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+      </div>
     </section>
 
     <aside class="note">
