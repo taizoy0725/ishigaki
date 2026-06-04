@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Опциональный тур по Исигаки | Программа на 3 дня</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <style>
+    :root {
+      --sea: #0f6ea8;
+      --reef: #13b8b0;
+      --sand: #f9f3e3;
+      --sun: #ffb45e;
+      --night: #0b2d4a;
+      --ink: #113047;
+      --card: rgba(255, 255, 255, 0.82);
+      --radius: 22px;
+      --shadow: 0 12px 35px rgba(11, 45, 74, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Kiwi Maru", serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255, 180, 94, 0.35), transparent 40%),
+        radial-gradient(circle at 90% 15%, rgba(19, 184, 176, 0.3), transparent 45%),
+        linear-gradient(160deg, #edf8ff 0%, #dff4f1 45%, #fff4db 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .wave {
+      position: fixed;
+      inset: auto -10% -140px -10%;
+      height: 260px;
+      background: linear-gradient(to top, rgba(15, 110, 168, 0.18), transparent 65%);
+      border-radius: 50% 50% 0 0;
+      filter: blur(1px);
+      animation: swell 7s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: min(1050px, 92vw);
+      margin: 0 auto;
+      padding: 32px 0 56px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      background:
+        linear-gradient(125deg, rgba(10, 37, 56, 0.32), rgba(9, 64, 87, 0.22)),
+        url("../assets/common/ishigaki-hero.jpeg") center 35% / cover no-repeat;
+      border-radius: 30px;
+      color: #fff;
+      padding: clamp(28px, 4.5vw, 52px);
+      box-shadow: var(--shadow);
+      animation: rise 0.8s ease-out both;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.19);
+      font-family: "Montserrat", sans-serif;
+      letter-spacing: 0.06em;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 14px 0 12px;
+      font-size: clamp(1.9rem, 4.4vw, 3.2rem);
+      line-height: 1.15;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 50ch;
+      line-height: 1.8;
+      font-size: clamp(1rem, 1.7vw, 1.13rem);
+    }
+
+    .days {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 26px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+      animation: rise 0.7s ease both;
+    }
+
+    .card:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .day {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--night);
+      color: #fff;
+      font-size: 0.78rem;
+      font-family: "Montserrat", sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    h2 {
+      margin: 12px 0 8px;
+      font-size: 1.3rem;
+      color: var(--night);
+      font-family: "Montserrat", sans-serif;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      line-height: 1.75;
+    }
+
+    .note {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: rgba(255, 180, 94, 0.2);
+      border: 1px solid rgba(255, 180, 94, 0.35);
+      line-height: 1.7;
+    }
+
+    .access {
+      margin-top: 22px;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .access h2 {
+      margin-top: 0;
+    }
+
+    .maps {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .map-card {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(17, 48, 71, 0.12);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    .map-title {
+      margin: 0 0 8px;
+      font-family: "Montserrat", sans-serif;
+      color: var(--night);
+      font-size: 0.95rem;
+    }
+
+    .map-canvas {
+      width: 100%;
+      height: 300px;
+      display: block;
+      border-radius: 12px;
+      background: linear-gradient(170deg, #dff3ff 0%, #eef9ff 55%, #f7feff 100%);
+      overflow: hidden;
+    }
+
+    .leaflet-container {
+      font-family: "Kiwi Maru", serif;
+    }
+
+    .distance-label {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(13, 107, 159, 0.35);
+      border-radius: 999px;
+      color: #0b2d4a;
+      font-weight: 700;
+      padding: 4px 10px;
+      box-shadow: 0 3px 10px rgba(11, 45, 74, 0.15);
+    }
+
+    .map-note {
+      margin: 10px 0 0;
+      font-size: 0.88rem;
+      color: #2c4b63;
+      line-height: 1.6;
+    }
+
+    .shorts {
+      margin-top: 22px;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .shorts h2 {
+      margin-top: 0;
+    }
+
+    .shorts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .short-card {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(17, 48, 71, 0.12);
+      border-radius: 14px;
+      padding: 10px;
+    }
+
+    .short-frame {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      border: 0;
+      border-radius: 10px;
+      display: block;
+      background: #000;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes swell {
+      from {
+        transform: translateX(-2%) scaleX(1.01);
+      }
+      to {
+        transform: translateX(2%) scaleX(0.99);
+      }
+    }
+
+    @media (max-width: 850px) {
+      .days {
+        grid-template-columns: 1fr;
+      }
+
+      .maps {
+        grid-template-columns: 1fr;
+      }
+
+      .shorts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wave" aria-hidden="true"></div>
+  <main class="container">
+    <section class="hero">
+      <span class="tag">Ishigaki Optional Tour</span>
+      <h1>Опциональный тур по Исигаки</h1>
+      <p class="lead">
+        Остров Исигаки находится в префектуре Окинава, Япония, и славится тропическими пляжами Тихого океана.<br>
+        Почувствуйте атмосферу южных островов по программе ниже.
+      </p>
+    </section>
+
+    <section class="days" aria-label="Программа на 3 дня">
+      <article class="card">
+        <span class="day">DAY 1</span>
+        <h2>Прибытие и закат у моря</h2>
+        <ul>
+          <li>Прибытие в аэропорт Исигаки и заселение в отель</li>
+          <li>Прогулка по району залива Кабира и отдых на белом пляже</li>
+          <li>После обеда посещение сталактитовой пещеры Исигаки (подходит и для дождливой погоды)</li>
+          <li>Вечером круиз на закате и виды на океан</li>
+          <li>Ужин из местных островных продуктов</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <span class="day">DAY 2</span>
+        <h2>День морских активностей</h2>
+        <ul>
+          <li>Утром снорклинг или пробное дайвинг-погружение</li>
+          <li>Тропический обед у пляжа</li>
+          <li>После обеда SUP или каяк в мангровых зарослях</li>
+          <li>Вечером, при хорошей погоде, тур наблюдения за звездами</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <span class="day">DAY 3</span>
+        <h2>Поездка на соседние острова и возвращение</h2>
+        <ul>
+          <li>Полудневный тур на Такэтоми или Ириомотэ</li>
+          <li>Прогулка по улицам с красной черепицей и фототочкам</li>
+          <li>Покупка сувениров и трансфер в аэропорт</li>
+          <li>Завершение поездки обменом лучших фото</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="access" aria-label="Схема доступа">
+      <h2>Схема доступа</h2>
+      <div class="maps">
+        <article class="map-card">
+          <h3 class="map-title">Япония и прямой маршрут Нарита → Исигаки</h3>
+          <div id="japan-narita-ishigaki-map" class="map-canvas" role="img" aria-label="Карта Японии и прямого маршрута из Нариты на Исигаки"></div>
+        </article>
+
+        <article class="map-card">
+          <h3 class="map-title">Расположение Окинавы и Исигаки</h3>
+          <div id="okinawa-ishigaki-map" class="map-canvas" role="img" aria-label="Карта расположения Окинавы и Исигаки"></div>
+        </article>
+      </div>
+      <p class="map-note">* Используется реальная карта OpenStreetMap. Линия перелета показана как схематичный прямой маршрут.</p>
+    </section>
+
+    <section class="shorts" aria-label="YouTube Shorts">
+      <h2>Короткие видео об Исигаки</h2>
+      <div class="shorts-grid">
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/q-EVZupV348" title="Исигаки шорт 1" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/YPnc-5V4YuU" title="Исигаки шорт 2" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/zgf40qv3yYY" title="Исигаки шорт 3" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/0kL2ik9n5BI" title="Исигаки шорт 4" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+        <article class="short-card">
+          <iframe class="short-frame" src="https://www.youtube.com/embed/BdtBDQ2_Oio" title="Исигаки шорт 5" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </article>
+      </div>
+    </section>
+
+    <aside class="note">
+      Программа на 3 дня корректируется в зависимости от погоды и состояния моря с приоритетом безопасности. Летом рекомендуется взять головной убор, солнцезащитный крем и воду.
+    </aside>
+  </main>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function () {
+      if (typeof L === "undefined") {
+        return;
+      }
+
+      var naha = [26.2124, 127.6809];
+      var ishigaki = [24.3963, 124.2454];
+      var narita = [35.7719, 140.3929];
+      var okinawaNorth = [26.8719, 128.2488];
+      var okinawaSouth = [26.0839, 127.6466];
+
+      function addTiles(map) {
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+      }
+
+      function haversineKm(from, to) {
+        var rad = Math.PI / 180;
+        var dLat = (to[0] - from[0]) * rad;
+        var dLng = (to[1] - from[1]) * rad;
+        var lat1 = from[0] * rad;
+        var lat2 = to[0] * rad;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return 6371 * c;
+      }
+
+      var mapLeft = L.map("okinawa-ishigaki-map", {
+        zoomControl: true,
+        scrollWheelZoom: false
+      });
+      addTiles(mapLeft);
+      L.marker(naha).addTo(mapLeft).bindPopup("Окинава (район Наха)");
+      L.marker(ishigaki).addTo(mapLeft).bindPopup("Исигаки (район нового аэропорта)");
+      L.polyline([naha, ishigaki], {
+        color: "#0d6b9f",
+        weight: 3,
+        dashArray: "8 6"
+      }).addTo(mapLeft).bindPopup("Окинава - Исигаки");
+
+      L.tooltip({
+        permanent: true,
+        direction: "center",
+        className: "distance-label",
+        opacity: 1
+      })
+        .setLatLng([(naha[0] + ishigaki[0]) / 2, (naha[1] + ishigaki[1]) / 2])
+        .setContent("около 410 км")
+        .addTo(mapLeft);
+
+      mapLeft.fitBounds([naha, ishigaki, okinawaNorth, okinawaSouth], {
+        padding: [30, 30]
+      });
+
+      var mapRight = L.map("japan-narita-ishigaki-map", {
+        zoomControl: true,
+        scrollWheelZoom: false
+      });
+      addTiles(mapRight);
+      L.marker(narita).addTo(mapRight).bindPopup("Аэропорт Нарита");
+      L.marker(ishigaki).addTo(mapRight).bindPopup("Исигаки (район нового аэропорта)");
+      L.polyline([narita, ishigaki], {
+        color: "#d9472f",
+        weight: 3,
+        dashArray: "10 6"
+      }).addTo(mapRight).bindPopup("Прямой маршрут Нарита - Исигаки");
+
+      L.tooltip({
+        permanent: true,
+        direction: "center",
+        className: "distance-label",
+        opacity: 1
+      })
+        .setLatLng([(narita[0] + ishigaki[0]) / 2, (narita[1] + ishigaki[1]) / 2])
+        .setContent("около " + Math.round(haversineKm(narita, ishigaki)) + " км")
+        .addTo(mapRight);
+
+      mapRight.setView([31.2, 131.5], 4);
+    })();
+  </script>
+</body>
+</html>

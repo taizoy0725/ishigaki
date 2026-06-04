@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,18 +32,23 @@
   </style>
   <script>
     (function () {
-      var isJapanese = /^ja(?:-|$)/i.test(navigator.language || "");
-      if (isJapanese) {
+      var langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
+      var preferred = (langs[0] || "").toLowerCase();
+      if (/^ja(?:-|$)/i.test(preferred)) {
         window.location.replace("ja/");
+        return;
+      }
+      if (/^ru(?:-|$)/i.test(preferred)) {
+        window.location.replace("ru/");
       }
     })();
   </script>
 </head>
 <body>
   <main class="panel">
-    <h1>石垣島オプショナルツアー</h1>
-    <p>日本語環境を検出した場合は自動で日本語ページに移動します。</p>
-    <p>自動で移動しない場合は <a href="ja/">日本語ページ</a> を開いてください。</p>
+    <h1>Ishigaki Optional Tour</h1>
+    <p>Pages are selected by browser language: Japanese or Russian.</p>
+    <p>If automatic redirection does not work, open <a href="ja/">Japanese</a> or <a href="ru/">Russian</a>.</p>
   </main>
 </body>
 </html>
