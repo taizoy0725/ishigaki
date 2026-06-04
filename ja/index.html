@@ -57,10 +57,16 @@
     }
 
     .hero {
-      background: linear-gradient(125deg, rgba(15, 110, 168, 0.9), rgba(19, 184, 176, 0.86));
+      background:
+        linear-gradient(125deg, rgba(10, 37, 56, 0.58), rgba(9, 64, 87, 0.44)),
+        url("../assets/common/ishigaki-hero.jpeg") center 35% / cover no-repeat;
       border-radius: 30px;
       color: #fff;
       padding: clamp(28px, 4.5vw, 52px);
+      min-height: clamp(220px, 38vw, 360px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
       box-shadow: var(--shadow);
       animation: rise 0.8s ease-out both;
     }
