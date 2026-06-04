@@ -198,6 +198,16 @@
       font-family: "Kiwi Maru", serif;
     }
 
+    .distance-label {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(13, 107, 159, 0.35);
+      border-radius: 999px;
+      color: #0b2d4a;
+      font-weight: 700;
+      padding: 4px 10px;
+      box-shadow: 0 3px 10px rgba(11, 45, 74, 0.15);
+    }
+
     .map-note {
       margin: 10px 0 0;
       font-size: 0.88rem;
@@ -313,6 +323,8 @@
       var naha = [26.2124, 127.6809];
       var ishigaki = [24.3963, 124.2454];
       var narita = [35.7719, 140.3929];
+      var okinawaNorth = [26.8719, 128.2488];
+      var okinawaSouth = [26.0839, 127.6466];
 
       function addTiles(map) {
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -333,7 +345,18 @@
         weight: 3,
         dashArray: "8 6"
       }).addTo(mapLeft).bindPopup("沖縄本島 - 石垣島");
-      mapLeft.fitBounds([naha, ishigaki], {
+
+      L.tooltip({
+        permanent: true,
+        direction: "center",
+        className: "distance-label",
+        opacity: 1
+      })
+        .setLatLng([(naha[0] + ishigaki[0]) / 2, (naha[1] + ishigaki[1]) / 2])
+        .setContent("約410km")
+        .addTo(mapLeft);
+
+      mapLeft.fitBounds([naha, ishigaki, okinawaNorth, okinawaSouth], {
         padding: [30, 30]
       });
 
